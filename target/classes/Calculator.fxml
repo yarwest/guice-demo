@@ -7,7 +7,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.yarwest.guice_demo.Calculator">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.yarwest.guice_demo.UIController">
    <children>
       <Button layoutX="115.0" layoutY="210.0" minWidth="75.0" mnemonicParsing="false" onMouseClicked="#additionEvent" prefHeight="27.0" text="Add" />
       <Button layoutX="210.0" layoutY="210.0" minWidth="75.0" mnemonicParsing="false" onMouseClicked="#subtractionEvent" text="Subtract" />

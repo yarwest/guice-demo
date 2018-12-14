@@ -1,4 +1,4 @@
-package com.yarwest.guice_demo;
+package com.yarwest.guice_demo.calculator.operations;
 
 public class Subtraction implements IOperation {
 	@Override

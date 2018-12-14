@@ -4,6 +4,8 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.name.Names;
+import com.yarwest.guice_demo.calculator.Calculator;
+import com.yarwest.guice_demo.calculator.operations.IOperation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

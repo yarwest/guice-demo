@@ -22,7 +22,7 @@ public class CalculatorTest {
 		Injector injector = Guice.createInjector(new AbstractModule() {
 			@Override
 			protected void configure() {
-				bind(IOperation.class).annotatedWith(Names.named("Addition Operation")).to(AdditionStub.class);
+				bind(IOperation.class).to(AdditionStub.class);
 			}
 		});
 		calc = injector.getInstance(Calculator.class);

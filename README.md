@@ -79,6 +79,8 @@ public class BootstrapModule extends AbstractModule {
 }
 ```
 
+Whenever you want to use a different implementation of `IOperation` you can just replace `Addition.class` with any other class that implements the same interface and it will work right away. This prevents having to refactor every reference to the specific implementation throughout your codebase.
+
 Now to actually tell Guice to use this particular configuration we have to modify our `bootstrap()` method from earlier to actually pass our `BootstrapModule` to be used by the injector.
 
 ```Java

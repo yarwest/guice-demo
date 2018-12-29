@@ -1,7 +1,11 @@
 # Guice demo
-A demo and explanation for using Guice for dependency injection in a Java application.
+A demo and explanation for using Guice for dependency injection in a Java application. Some of the knowledge is aimed specifically at Guice but a few things are more widely applicable.
 
 Java/OO knowledge is basically a must to be able to follow along.
+
+The `src` directory contains example code. The first example in the [calculator](https://github.com/yarwest/guice-demo/tree/master/src/main/java/com/yarwest/guice_demo/calculator) package is a JavaFX application with a very simple calculator implemented. This example has some additional configuration going on in the `start` method to properly initiate a JavaFX window.
+
+The second example in the [my_class_example](https://github.com/yarwest/guice-demo/tree/master/src/main/java/com/yarwest/guice_demo/my_class_example) package is a simpler program without a GUI that prints output directly to `System.out`.
 
 ## The goal
 The point of dependency injection is to reduce coupling between parts of software.
@@ -86,6 +90,30 @@ public void bootstrap() {
 ```
 And that connects the various classed together properly.
 
+The [JUnit4 test package](https://github.com/yarwest/guice-demo/tree/master/src/test/java/com/yarwest/guice_demo) shows how you can easily sumplement an binding with a stub by creating an anonymous instance of the `AbstractModule` inside your unit test build up. For example:
+
+```Java
+public class CalculatorTest {
+  private Calculator calc;
+
+  @BeforeEach
+  public void setup() {
+    Injector injector = Guice.createInjector(new AbstractModule() {
+      @Override
+      protected void configure() {
+        bind(IOperation.class).to(AdditionStub.class);
+      }
+    });
+    calc = injector.getInstance(Calculator.class);
+  }
+
+  @Test
+  public void calculatorTest() {
+    assertEquals(calc.addition(3, 9), 39);
+  }
+}
+```
+
 ## Advanced
 That was the simple part, now there is a lot more that can be done using Guice and JavaX so I will showcase a few neat tricks.
 
@@ -115,14 +143,73 @@ Which in turn leads to a configuration that looks like this:
 ```Java
 public class BootstrapModule extends AbstractModule {
 
-	@Override
-	protected void configure() {
-		bind(IOperation.class).annotatedWith(Names.named("Addition Operation")).to(Addition.class);
-		bind(IOperation.class).annotatedWith(Names.named("Subtraction Operation")).to(Subtraction.class);
-		bind(IOperation.class).annotatedWith(Names.named("Multiplication Operation")).to(Multiplication.class);
-		bind(IOperation.class).annotatedWith(Names.named("Division Operation")).to(Division.class);
-	}
+  @Override
+  protected void configure() {
+	  bind(IOperation.class).annotatedWith(Names.named("Addition Operation")).to(Addition.class);
+	  bind(IOperation.class).annotatedWith(Names.named("Subtraction Operation")).to(Subtraction.class);
+	  bind(IOperation.class).annotatedWith(Names.named("Multiplication Operation")).to(Multiplication.class);
+	  bind(IOperation.class).annotatedWith(Names.named("Division Operation")).to(Division.class);
+  }
 }
 ```
 
-For a more detailed look into the classes defintely check out the [Calculator Package](https://github.com/yarwest/guice-demo/tree/master/src/main/java/com/yarwest/guice_demo/calculator).
+For a more detailed look into the classes defintely check out the [calculator package](https://github.com/yarwest/guice-demo/tree/master/src/main/java/com/yarwest/guice_demo/calculator).
+
+### Constructor injection
+The earlier examples were all based on field injection but that is not the only way to set properties of a class via dependency injection. One can also utilize constructor injection, which works roughly the same way.
+
+Instead of having the properties being injected seperately, they get declared normally and get injected together in the constructor, this would look as follows:
+
+```Java
+public class UIController {
+  
+  private Calculator calculator;
+
+  @Inject
+  public UIController(Calculator calculator) {
+    this.calculator = calculator;
+  }
+}
+```
+As you can see this does require a bit more code but provides a slight performance boost since your dependency injection framework does not have to perform seperate (reflection) operations for each property that has to be injected.
+
+Another factor is compatibility as certain Java platforms do not support reflection.
+
+Last but not least it makes it clearer what dependencies a particular class has just from seeing the constructor and its signature and allows you to create an instance yourself without having to rely on any tools by simply calling the constructor and not having to worry about fields that are to be set but can't immediately be seen or accessed.
+
+### Providers
+As mentioned before, it is vital that the chain of injections is not broken. This is easy enough with an `@Inject` when one class relies on a set number of instances of another class, but when this number is unknown/dynamic a simple property and annotation will not suffice.
+
+This can be solved by using a `Provider`, which is another `javax` gem. This `Provider` essentially serves as a factory that can create instances of a specific class. All that has to be done is injecting it and the best way that can be done is by performing a constructor injection as demonstrated below:
+
+```Java
+public class MyClassFactory {
+	private final Provider<MyClass> myClassProvider;
+
+	private List<MyClass> classes = new ArrayList<>();
+
+	@Inject
+	public MyClassFactory(Provider<MyClass> myClassProvider) {
+		this.myClassProvider = myClassProvider;
+	}
+
+  ...
+}
+```
+
+Summarized, this class has a `Provider` property that can create `MyClass` instances and this `Provider` is set in the constructor.
+
+To use the provider and get an instance of `MyClass` all that has to be done is calling the `get()` method:
+```Java
+public class MyClassFactory {
+  ...
+
+  public MyClass getClassInstance() {
+    return myClassProvider.get();
+  }
+}
+```
+
+This way every instance of `MyClass` will have it's injections resolved and the chain will live on.
+
+The `MyClassFactory` can be found in the [my_class_example](https://github.com/yarwest/guice-demo/tree/master/src/main/java/com/yarwest/guice_demo/my_class_example) for a better look at using a `Provider`.

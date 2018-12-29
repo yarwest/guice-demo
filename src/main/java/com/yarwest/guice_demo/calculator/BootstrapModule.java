@@ -1,4 +1,4 @@
-package com.yarwest.guice_demo;
+package com.yarwest.guice_demo.calculator;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.name.Names;

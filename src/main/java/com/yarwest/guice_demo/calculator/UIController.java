@@ -1,4 +1,4 @@
-package com.yarwest.guice_demo;
+package com.yarwest.guice_demo.calculator;
 
 import com.yarwest.guice_demo.calculator.Calculator;
 import javafx.fxml.FXML;

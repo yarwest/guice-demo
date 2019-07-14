@@ -92,7 +92,7 @@ public void bootstrap() {
 ```
 And that connects the various classed together properly.
 
-The [JUnit4 test package](https://github.com/yarwest/guice-demo/tree/master/src/test/java/com/yarwest/guice_demo) shows how you can easily sumplement an binding with a stub by creating an anonymous instance of the `AbstractModule` inside your unit test build up. For example:
+The [JUnit4 test package](https://github.com/yarwest/guice-demo/tree/master/src/test/java/com/yarwest/guice_demo) shows how you can easily supplement an binding with a stub by creating an anonymous instance of the `AbstractModule` inside your unit test build up. For example:
 
 ```Java
 public class CalculatorTest {
@@ -187,8 +187,6 @@ This can be solved by using a `Provider`, which is another `javax` gem. This `Pr
 ```Java
 public class MyClassFactory {
 	private final Provider<MyClass> myClassProvider;
-
-	private List<MyClass> classes = new ArrayList<>();
 
 	@Inject
 	public MyClassFactory(Provider<MyClass> myClassProvider) {
